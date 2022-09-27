@@ -29,7 +29,15 @@ const CustomTable = ({ data, sortBy, sortOrder, requestSort }) => {
                   id
                 </TableSortLabel>
               </TableCell>
-              <TableCell>first_name</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortBy === "first_name"}
+                  direction={sortOrder}
+                  onClick={() => requestSort("first_name")}
+                >
+                  first_name
+                </TableSortLabel>
+              </TableCell>
               <TableCell>last_name</TableCell>
               <TableCell>gender</TableCell>
               <TableCell>
