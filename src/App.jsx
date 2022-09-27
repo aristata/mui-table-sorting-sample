@@ -10,50 +10,47 @@ function App() {
     sortOrder: "asc"
   });
 
-  const compareFunction = (a, b) => {
-    if (a[orderState.sortBy] < b[orderState.sortBy]) {
-      return orderState.sortOrder === "asc" ? 1 : -1;
-    } else if (a[orderState.sortBy] > b[orderState.sortBy]) {
-      return orderState.sortOrder === "asc" ? -1 : 1;
+  const compareFunction = (a, b, sortBy, sortOrder) => {
+    if (a[sortBy] < b[sortBy]) {
+      return sortOrder === "asc" ? -1 : 1;
+    } else if (a[sortBy] > b[sortBy]) {
+      return sortOrder === "asc" ? 1 : -1;
     } else {
       return 0;
     }
   };
 
   const requestSort = (sortByProp) => {
-    let newSortOrder = orderState.sortOrder;
-    let newSortBy = orderState.sortBy;
+    console.log("sortByProp", sortByProp);
+    const {
+      sortData: oldData,
+      sortBy: oldSortBy,
+      sortOrder: oldSortOrder
+    } = orderState;
+
+    let newSortOrder = oldSortOrder;
+    let newSortBy = oldSortBy;
+    let newData = oldData;
 
     // 프롭스로 전달된 정렬기준이 스테이트에 저장된 정렬기준과 같은지에 따라 분기
-    if (sortByProp === orderState.sortBy) {
+    if (sortByProp === oldSortBy) {
       // 같다면 정렬순서만 변경한다
-
-      newSortOrder = orderState.sortOrder === "asc" ? "desc" : "asc";
+      newSortOrder = oldSortOrder === "asc" ? "desc" : "asc";
     } else {
       // 다르면 새 정렬기준을 스테이트에 저장하고, 정렬순서는 ASC 로 설정한다
       newSortBy = sortByProp;
       newSortOrder = "asc";
     }
-    setOrderState((prev) => {
-      return {
-        ...prev,
-        sortBy: newSortBy,
-        sortOrder: newSortOrder
-      };
+    console.log("newSortOrder", newSortOrder);
+    console.log("newSortBy", newSortBy);
+    newData = oldData.sort((a, b) =>
+      compareFunction(a, b, newSortBy, newSortOrder)
+    );
+    setOrderState({
+      sortData: newData,
+      sortBy: newSortBy,
+      sortOrder: newSortOrder
     });
-
-    console.log("prev data", orderState.sortData);
-
-    // 데이터의 정렬을 변경한다
-    const newSortData = data.sort(compareFunction);
-    setOrderState((prev) => {
-      return {
-        ...prev,
-        sortData: newSortData
-      };
-    });
-
-    console.log("after data", orderState.sortData);
   };
 
   return (
